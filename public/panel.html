@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Panel Session — PDRS</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/animations.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <a class="nav__brand" href="/">PDRS</a>
+      <div class="nav__links">
+        <a href="/faculty.html">Dashboard</a>
+        <a href="/notifications.html">Notifications</a>
+      </div>
+    </nav>
+
+    <main class="container">
+      <header class="hero anim-fade-in">
+        <h1>Live Panel Session</h1>
+        <p class="tagline">Observe, annotate, and score in real time.</p>
+      </header>
+
+      <section class="card anim-slide-up">
+        <h2 class="card__title">Video</h2>
+        <div class="row">
+          <video id="local-video" autoplay muted playsinline style="width:48%;background:#000;border-radius:8px;"></video>
+          <video id="remote-video" autoplay playsinline style="width:48%;background:#000;border-radius:8px;"></video>
+        </div>
+        <p class="muted">WebRTC signalling wires up in a later phase.</p>
+      </section>
+
+      <section class="card anim-slide-up">
+        <h2 class="card__title">Annotations</h2>
+        <form id="annotation-form" class="form">
+          <div class="form__row">
+            <label for="annotation-note">Note</label>
+            <textarea id="annotation-note" name="note" placeholder="Observation for this question…"></textarea>
+          </div>
+          <div class="form__row">
+            <label for="score-override">Score override (optional, 0–100)</label>
+            <input type="number" id="score-override" name="score_override" min="0" max="100" step="1" />
+          </div>
+          <button type="submit" class="btn btn--primary" disabled>Add annotation</button>
+        </form>
+      </section>
+    </main>
+
+    <div class="toast-host" id="toast-host"></div>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/toast.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/websocket.js"></script>
+    <script src="/js/webrtc.js"></script>
+  </body>
+</html>
