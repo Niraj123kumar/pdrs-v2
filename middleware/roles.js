@@ -1,21 +1,19 @@
 'use strict';
 
 /**
- * Factory: returns middleware that allows only users whose `req.user.role`
- * matches one of the allowed roles. Must be composed after `requireAuth`.
+ * Factory: returns middleware that only allows requests whose `req.user.role`
+ * equals the given role string. Must compose after verifyToken so req.user
+ * is populated.
  *
- *   app.get('/x', requireAuth, requireRole('faculty'), handler)
- *   app.get('/y', requireAuth, requireRole('student', 'faculty'), handler)
+ * Usage:
+ *   router.get('/x', verifyToken, requireRole('faculty'), handler)
+ *
+ * Responds 403 { error: "Access denied" } when role does not match.
  */
-function requireRole(...allowed) {
-  const allowedSet = new Set(allowed);
+function requireRole(role) {
   return function roleGuard(req, res, next) {
-    const user = req.user;
-    if (!user || !user.role) {
-      return res.status(401).json({ error: 'unauthenticated' });
-    }
-    if (!allowedSet.has(user.role)) {
-      return res.status(403).json({ error: 'forbidden', required: [...allowedSet] });
+    if (!req.user || req.user.role !== role) {
+      return res.status(403).json({ error: 'Access denied' });
     }
     return next();
   };

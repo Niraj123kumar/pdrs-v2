@@ -18,18 +18,29 @@
     <main class="container container--narrow">
       <section class="card anim-fade-in">
         <h2 class="card__title">Login</h2>
-        <form id="login-form" class="form" autocomplete="on">
+        <p class="muted">Sign in with your student or faculty account.</p>
+
+        <form id="login-form" class="form" autocomplete="on" novalidate>
           <div class="form__row">
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required autocomplete="email" />
           </div>
           <div class="form__row">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required minlength="6" autocomplete="current-password" />
+            <input type="password" id="password" name="password" required minlength="1" autocomplete="current-password" />
           </div>
-          <button type="submit" class="btn btn--primary">Sign in</button>
-          <p class="muted">Login handler wires up in Phase 2.</p>
+          <p id="form-error" class="status status--err hidden" role="alert"></p>
+          <button type="submit" id="submit-btn" class="btn btn--primary">Sign in</button>
+          <p class="muted">Don't have an account? <a href="/register.html">Register</a>.</p>
         </form>
+      </section>
+
+      <section class="card anim-slide-up">
+        <h2 class="card__title">Demo accounts</h2>
+        <p class="muted">
+          <code>demo_student@pdrs.com</code> / <code>demo1234</code><br />
+          <code>demo_faculty@pdrs.com</code> / <code>demo1234</code>
+        </p>
       </section>
     </main>
 
@@ -39,5 +50,54 @@
     <script src="/js/toast.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
+    <script>
+      (function () {
+        const form = document.getElementById('login-form');
+        const errorEl = document.getElementById('form-error');
+        const submitBtn = document.getElementById('submit-btn');
+
+        function showError(msg) {
+          errorEl.textContent = msg;
+          errorEl.classList.remove('hidden');
+        }
+        function clearError() {
+          errorEl.textContent = '';
+          errorEl.classList.add('hidden');
+        }
+
+        // If already signed in, send them to the right dashboard.
+        if (pdrs.auth.isAuthenticated()) {
+          const user = pdrs.auth.getUser();
+          window.location.replace(pdrs.auth.dashboardFor(user && user.role));
+          return;
+        }
+
+        form.addEventListener('submit', async function (ev) {
+          ev.preventDefault();
+          clearError();
+
+          const email = form.email.value.trim();
+          const password = form.password.value;
+          if (!email || !password) {
+            showError('Please enter both email and password.');
+            return;
+          }
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Signing in…';
+          try {
+            const res = await pdrs.api.post('/api/auth/login', { email, password });
+            pdrs.auth.saveToken(res.token, res.user);
+            pdrs.toast.ok('Welcome back, ' + (res.user.name || res.user.email));
+            window.location.href = pdrs.auth.dashboardFor(res.user.role);
+          } catch (err) {
+            const msg = (err && err.body && err.body.error) || err.message || 'Login failed';
+            showError(msg);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Sign in';
+          }
+        });
+      })();
+    </script>
   </body>
 </html>

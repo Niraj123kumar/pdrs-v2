@@ -12,17 +12,18 @@ function extractBearerToken(req) {
 }
 
 /**
- * Verify a JWT and attach the decoded payload to `req.user`.
- * Returns 401 on missing/invalid token.
+ * Verify a JWT from the Authorization header and attach the decoded payload
+ * to req.user. Responds 401 with { error: "Authentication required" } when
+ * the token is missing, malformed, expired, or fails verification.
  */
-function requireAuth(req, res, next) {
+function verifyToken(req, res, next) {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
-    return res.status(500).json({ error: 'jwt_secret_not_configured' });
+    return res.status(500).json({ error: 'JWT_SECRET not configured' });
   }
   const token = extractBearerToken(req);
   if (!token) {
-    return res.status(401).json({ error: 'missing_token' });
+    return res.status(401).json({ error: 'Authentication required' });
   }
   try {
     const payload = jwt.verify(token, secret);
@@ -30,12 +31,12 @@ function requireAuth(req, res, next) {
     req.token = token;
     return next();
   } catch (_err) {
-    return res.status(401).json({ error: 'invalid_token' });
+    return res.status(401).json({ error: 'Authentication required' });
   }
 }
 
 /**
- * Sign a JWT for the given user payload using the configured secret/expiry.
+ * Sign a JWT for the given user payload using JWT_SECRET and JWT_EXPIRES_IN.
  */
 function signToken(payload) {
   const secret = process.env.JWT_SECRET;
@@ -45,7 +46,9 @@ function signToken(payload) {
 }
 
 module.exports = {
-  requireAuth,
+  verifyToken,
   signToken,
   extractBearerToken,
+  // Alias kept for any existing callers; identical to verifyToken.
+  requireAuth: verifyToken,
 };
