@@ -1,0 +1,341 @@
+
+You are a senior UI/UX developer. Go through every HTML page 
+and add all missing small UI details listed below.
+
+Do not change any functionality or API calls.
+Only add UI/UX improvements.
+
+GO THROUGH EVERY PAGE ONE BY ONE:
+login.html, register.html, student.html, faculty.html,
+session.html, results.html, history.html, notifications.html,
+panel.html, security.html, audit.html, admin.html,
+flashcards.html, peer.html, compare.html, integrations.html,
+notifications-settings.html, index.html
+
+FOR EVERY PASSWORD INPUT FIELD:
+- Add eye icon button next to input
+- On click toggle type between "password" and "text"
+- Eye icon: 👁 when password hidden
+- Eye slash icon: 🙈 when password visible
+- Apply to: login.html, register.html, security.html, admin.html
+
+FOR EVERY SUBMIT BUTTON / ACTION BUTTON:
+- Add loading spinner while API call is in progress
+- Disable button during loading to prevent double submit
+- Restore button text and enable after response
+- Show spinner as: ⏳ or CSS spinner animation
+- Apply to every form submit button on every page
+
+FOR EVERY FORM INPUT FIELD:
+- Show red border on invalid input
+- Show green border on valid input
+- Show error message below field in red text
+- Clear error message when user starts typing
+- Apply to: all forms on all pages
+
+FOR EVERY DELETE / DESTRUCTIVE ACTION BUTTON:
+- Add confirmation modal before executing
+- Modal text: "Are you sure? This cannot be undone."
+- Cancel button and Confirm button
+- Confirm button is red
+- Apply to: delete session, delete template, delete flashcard,
+  delete goal, delete bookmark, delete device, remove student flag,
+  delete announcement, cancel defense, delete account
+
+FOR EVERY LIST / TABLE:
+- Show loading skeleton while data is fetching
+- Show empty state when list is empty
+- Empty state has icon + message + CTA button
+- Examples:
+  * No sessions yet → "Start your first session" button
+  * No flashcards → "Create your first flashcard" button
+  * No goals → "Set your first goal" button
+  * No bookmarks → "Complete a session to bookmark questions"
+  * No notifications → "You're all caught up! 🎉"
+  * No students → "No students enrolled yet"
+  * No announcements → "No announcements yet"
+
+FOR EVERY API ERROR:
+- Show red toast notification with error message
+- Never show blank screen on error
+- Show retry button where appropriate
+- Apply to every fetch() call on every page
+
+FOR EVERY SUCCESS ACTION:
+- Show green toast notification
+- Examples:
+  * "Session saved successfully ✅"
+  * "Goal updated ✅"
+  * "Flashcard added ✅"
+  * "Announcement created ✅"
+  * "Defense scheduled ✅"
+  * "Settings saved ✅"
+
+FOR EVERY BUTTON:
+- Add hover effect (slight color change or shadow)
+- Add active/pressed effect (slight scale down)
+- Add focus outline for accessibility
+- Add cursor: pointer
+- Disabled state should be visually obvious (gray + not-allowed cursor)
+
+FOR EVERY INPUT FIELD:
+- Add focus highlight (colored border or glow)
+- Add placeholder text if missing
+- Add proper label if missing
+- Tab navigation should work correctly
+
+FOR EVERY PAGE:
+- Add page title in browser tab (document.title)
+- Add favicon if missing
+- Smooth scroll behavior
+- No horizontal scroll on mobile
+- All text readable on both light and dark mode
+
+FOR EVERY MODAL:
+- Click outside to close
+- Press Escape key to close
+- Trap focus inside modal while open
+- Add close X button in top right corner
+- Smooth open/close animation
+
+FOR EVERY TABLE:
+- Alternating row colors (zebra striping)
+- Hover highlight on rows
+- Sortable columns where appropriate
+- Responsive: horizontal scroll on mobile instead of breaking layout
+
+FOR CHARACTER COUNTERS:
+- Add to every textarea
+- Format: "X / MAX characters"
+- Turn amber when 80% full
+- Turn red when 95% full
+- Apply to: answer textarea in session, note inputs,
+  announcement message, question inputs
+
+FOR NAVIGATION:
+- Highlight active page in navbar
+- Add breadcrumbs on deep pages
+- Back button where appropriate
+- Smooth page transitions
+
+FOR IMAGES AND AVATARS:
+- Show initials avatar if no profile picture
+- Format: first letter of name in colored circle
+- Color based on name hash for consistency
+
+FOR FORMS WITH MULTIPLE STEPS:
+- Show step indicator (Step 1 of 3)
+- Show progress bar
+- Validate each step before advancing
+- Allow going back to previous step
+
+FOR DARK MODE:
+- Every new element added must support dark mode
+- Use CSS variables for all colors
+- Never hardcode color values
+
+FOR MOBILE:
+- Every button must be at least 44px tall (touch target)
+- No text smaller than 14px
+- Inputs must not zoom on focus (font-size >= 16px)
+- Bottom navigation on mobile if applicable
+
+FOR ACCESSIBILITY:
+- Every image has alt text
+- Every button has aria-label if no text
+- Every form field has associated label
+- Color is not the only indicator of state
+- Screen reader compatible
+
+SPECIFIC FIXES PER PAGE:
+
+index.html:
+- Student card button loading state when redirecting
+- Faculty card button loading state when redirecting
+- Demo button spinner while calling API
+- AI Engine status: green dot when connected, red when not
+
+login.html:
+- Show/hide password toggle on password field
+- Remember me checkbox
+- Forgot password link (even if not implemented, show it)
+- Loading spinner on Login button
+- Shake animation on wrong credentials
+- Auto-focus email field on page load
+
+register.html:
+- Show/hide password toggle
+- Password strength meter (weak/medium/strong bar)
+- Real-time validation as user types
+- Loading spinner on Register button
+- Role selector should look like toggle buttons not radio
+
+student.html:
+- Skeleton loaders for all data sections
+- Empty states for goals, badges, bookmarks, sessions
+- Progress rings instead of plain bars for dimensions
+- Streak counter flame animation
+- Defense countdown pulsing animation when < 24 hours
+
+faculty.html:
+- Skeleton loaders for stats cards
+- At-risk students pulsing red indicator
+- Search input with clear X button
+- Filter dropdowns with active indicator
+- Export button loading state
+
+session.html:
+- Question card entrance animation
+- Timer circle animation
+- Submit button loading state while scoring
+- Score reveal animation
+- Voice recording indicator (pulsing red dot)
+- Hint used indicator per question
+
+results.html:
+- Score circle count-up animation
+- Dimension bar fill animation
+- Grade badge entrance animation
+- Confetti animation for scores above 85
+
+flashcards.html:
+- Card flip 3D animation (CSS transform)
+- Swipe gesture support on mobile
+- Progress ring showing daily completion
+- Streak counter
+
+notifications.html:
+- Unread notifications highlighted with left blue border
+- Mark as read animation (fade out highlight)
+- Notification grouped by date (Today, Yesterday, This Week)
+
+panel.html:
+- Connection quality indicator
+- Speaking indicator (pulsing when mic active)
+- Timer circle turns red under 30 seconds
+- Raise hand button pulse animation while pending
+
+security.html:
+- TOTP QR code loading state
+- Device list with device type icons (💻 📱 🖥)
+- Current device highlighted with green badge
+
+admin.html:
+- Stats cards with trend arrows (up/down vs last week)
+- User status badges (active/suspended/new)
+- Bulk action checkboxes on user table
+- Confirmation modal for suspend/delete
+
+After completing all pages output:
+
+SUMMARY OF CHANGES:
+- List every file modified
+- List every UI element added
+- Count total improvements made
+
+Do all pages. Do not skip any page.
+Do not break any existing functionality.
+
+Continue UI/UX improvements. These pages are already done:
+student.html, session.html, results.html, flashcards.html,
+notifications.html, panel.html, security.html, admin.html
+
+Only do these remaining pages:
+- history.html
+- audit.html
+- peer.html
+- compare.html
+- integrations.html
+- notifications-settings.html
+- index.html
+- login.html
+- register.html
+
+For each page add:
+- Show/hide password toggles on password fields
+- Loading spinners on all buttons during API calls
+- Empty states on all lists with CTA button
+- Success/error toast on every action
+- Confirmation modals on all delete actions
+- Skeleton loaders while data loads
+- Character counters on all textareas
+- Dark mode support on all new elements
+- Mobile responsive at 375px
+
+Do one page at a time. Say DONE after each page.
+Do not touch already completed pages.
+Niraj123kumar/pdrs-v2
+ 
+
+
+6:27 PM
+
+user avatar
+Thought for 3s
+I'll add UI/UX improvements to the 9 remaining pages one at a time. Working through: history.html, audit.html, peer.html, compare.html, integrations.html, notifications-settings.html, index.html, login.html, register.html.
+
+
+6:28 PM
+Worked for 3m 44s
++233
+−64
+Created 14 Tasks
+Searched public for *.html
+Thought for 3s
+Searched public for *.html
+Read history.html:1-64, peer.html:1-64, audit.html:1-87
+Thought for 1s
+Read peer.html:64-136, history.html:64-121, audit.html:87-184, compare.html:1-84, integrations.html:1-90, peer.html:136-239, notifications-settings.html:1-85, compare.html:84-187, integrations.html:90-183, compare.html:187-279, integrations.html:183-276, notifications-settings.html:85-188
+Thought for 1s
+Read index.html:1-82, register.html:1-74, login.html:1-72, index.html:82-166, login.html:72-180, register.html:74-169, index.html:166-261, register.html:169-209, login.html:180-277, index.html:261-303, login.html:277-338, peer.html:239-325, notifications-settings.html:188-277, integrations.html:276-397, peer.html:325-440
+Thought for 1s
+Read toast.js:1-133, peer.html:440-454, integrations.html:397-408, toast.js:133-219
+Thought for 1s
+Read history-logic.js:1-108, style.css:1-217, style.css:217-341, history-logic.js:108-218
+Thought for 4s
+2/12UI/UX improvements: history.html
+Thought for 1s
+Read history-logic.js:218-344
+Thought for 2s
+Read animations.css:1-174
+Thought for 13s
+Edited history.html
++44
+−16
+Thought for 4s
+3/12UI/UX improvements: audit.html
+Thought for 15s
+Edited audit.html
++62
+−22
+4/12UI/UX improvements: peer.html
+Thought for 10s
+Edited peer.html
++18
+−7
+5/12UI/UX improvements: compare.html
+Edited compare.html
++34
+−4
+Thought for 9s
+Thought for 2s
+Edited compare.html
++1
+6/12UI/UX improvements: integrations.html
+Thought for 9s
+Edited integrations.html
++38
+−4
+7/12UI/UX improvements: notifications-settings.html
+Thought for 9s
+Edited notifications-settings.html
++23
+−5
+8/12UI/UX improvements: index.html
+Thought for 5s
+Edited index.html
++14
+−7
+9/12UI/UX improvements: login.html
+Thought for 6s
+Now login.html - it already has password toggle, loading spinner, form validation, shake animation, remember me, forgot password link, auto-focus, OTP, TOTP, Google login. Let me add more refinements: mobile responsive, theme toggle hover, accessibility improvements, input font size for mobile
