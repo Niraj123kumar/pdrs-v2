@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Faculty Dashboard — PDRS</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/animations.css" />
   </head>
@@ -26,12 +27,12 @@
 
       <section class="card anim-slide-up">
         <h2 class="card__title">Pending requests</h2>
-        <p class="muted">Request list wires up in a later phase.</p>
+        <div id="requests-host"></div>
       </section>
 
       <section class="card anim-slide-up">
         <h2 class="card__title">Upcoming panels</h2>
-        <p class="muted">Schedule view wires up in a later phase.</p>
+        <div id="panels-host"></div>
       </section>
     </main>
 
@@ -39,9 +40,41 @@
 
     <script src="/js/utils.js"></script>
     <script src="/js/toast.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script src="/js/animations.js"></script>
     <script src="/js/websocket.js"></script>
+    <script>
+      (function () {
+        const ui = window.pdrs.ui;
+        const requestsHost = document.getElementById('requests-host');
+        const panelsHost = document.getElementById('panels-host');
+
+        requestsHost.appendChild(ui.skeletonLines(3));
+        panelsHost.appendChild(ui.skeletonLines(2));
+
+        setTimeout(() => {
+          requestsHost.innerHTML = '';
+          requestsHost.appendChild(
+            ui.emptyState({
+              icon: '📥',
+              title: 'No pending requests',
+              message: 'Student panel requests will appear here as they come in.',
+            })
+          );
+          panelsHost.innerHTML = '';
+          panelsHost.appendChild(
+            ui.emptyState({
+              icon: '🎙️',
+              title: 'No upcoming panels',
+              message: 'Schedule a panel from a pending request to see it here.',
+              ctaText: 'Open Panel page',
+              ctaHref: '/panel.html',
+            })
+          );
+        }, 350);
+      })();
+    </script>
   </body>
 </html>

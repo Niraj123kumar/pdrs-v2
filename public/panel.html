@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Panel Session — PDRS</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/animations.css" />
   </head>
@@ -17,32 +18,48 @@
     </nav>
 
     <main class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/faculty.html">Dashboard</a>
+        <span class="breadcrumb__sep">›</span>
+        <span>Panel Session</span>
+      </nav>
+
       <header class="hero anim-fade-in">
         <h1>Live Panel Session</h1>
         <p class="tagline">Observe, annotate, and score in real time.</p>
       </header>
 
       <section class="card anim-slide-up">
-        <h2 class="card__title">Video</h2>
+        <div class="row row--between">
+          <h2 class="card__title">Video</h2>
+          <span class="badge"><span id="conn-dot" class="dot"></span><span id="conn-label">Disconnected</span></span>
+        </div>
         <div class="row">
-          <video id="local-video" autoplay muted playsinline style="width:48%;background:#000;border-radius:8px;"></video>
-          <video id="remote-video" autoplay playsinline style="width:48%;background:#000;border-radius:8px;"></video>
+          <video id="local-video" autoplay muted playsinline aria-label="Your video"
+                 style="width:48%;background:#000;border-radius:8px;"></video>
+          <video id="remote-video" autoplay playsinline aria-label="Remote video"
+                 style="width:48%;background:#000;border-radius:8px;"></video>
         </div>
         <p class="muted">WebRTC signalling wires up in a later phase.</p>
       </section>
 
       <section class="card anim-slide-up">
         <h2 class="card__title">Annotations</h2>
-        <form id="annotation-form" class="form">
+        <form id="annotation-form" class="form" novalidate data-validate>
           <div class="form__row">
             <label for="annotation-note">Note</label>
-            <textarea id="annotation-note" name="note" placeholder="Observation for this question…"></textarea>
+            <textarea id="annotation-note" name="note" placeholder="Observation for this question…"
+                      maxlength="500" data-counter></textarea>
           </div>
           <div class="form__row">
             <label for="score-override">Score override (optional, 0–100)</label>
-            <input type="number" id="score-override" name="score_override" min="0" max="100" step="1" />
+            <input type="number" id="score-override" name="score_override" min="0" max="100" step="1"
+                   placeholder="e.g. 82" />
           </div>
-          <button type="submit" class="btn btn--primary" disabled>Add annotation</button>
+          <div class="row row--between">
+            <button type="button" id="end-panel-btn" class="btn btn--ghost">End panel</button>
+            <button type="submit" id="add-annotation-btn" class="btn btn--primary" disabled>Add annotation</button>
+          </div>
         </form>
       </section>
     </main>
@@ -51,10 +68,29 @@
 
     <script src="/js/utils.js"></script>
     <script src="/js/toast.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script src="/js/animations.js"></script>
     <script src="/js/websocket.js"></script>
     <script src="/js/webrtc.js"></script>
+    <script>
+      (function () {
+        const ui = window.pdrs.ui;
+        const endBtn = document.getElementById('end-panel-btn');
+        endBtn.addEventListener('click', async () => {
+          const ok = await ui.confirmModal({
+            title: 'End the panel session?',
+            message: 'The student will be notified that the session has ended. This cannot be undone.',
+            confirmText: 'End panel',
+            cancelText: 'Stay',
+          });
+          if (ok) {
+            window.pdrs.toast.warn('Panel session ended.');
+            setTimeout(() => (window.location.href = '/faculty.html'), 600);
+          }
+        });
+      })();
+    </script>
   </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Student Dashboard — PDRS</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/animations.css" />
   </head>
@@ -26,12 +27,12 @@
 
       <section class="card anim-slide-up">
         <h2 class="card__title">Your projects</h2>
-        <p class="muted">Project management UI wires up in a later phase.</p>
+        <div id="projects-host"></div>
       </section>
 
       <section class="card anim-slide-up">
         <h2 class="card__title">Active rehearsal</h2>
-        <p class="muted">Session flow wires up in a later phase.</p>
+        <div id="active-host"></div>
       </section>
     </main>
 
@@ -39,9 +40,46 @@
 
     <script src="/js/utils.js"></script>
     <script src="/js/toast.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script src="/js/animations.js"></script>
     <script src="/js/websocket.js"></script>
+    <script>
+      (function () {
+        const ui = window.pdrs.ui;
+
+        // Show skeletons briefly so the page feels alive, then render the
+        // empty state until later phases wire real data.
+        const projectsHost = document.getElementById('projects-host');
+        const activeHost = document.getElementById('active-host');
+        projectsHost.appendChild(ui.skeletonLines(3));
+        activeHost.appendChild(ui.skeletonLines(2));
+
+        setTimeout(() => {
+          projectsHost.innerHTML = '';
+          projectsHost.appendChild(
+            ui.emptyState({
+              icon: '📁',
+              title: 'No projects yet',
+              message: 'Add a project to start a rehearsal session.',
+              ctaText: 'Add a project',
+              onCta: () => window.pdrs.toast.info('Project creation wires up in a later phase.'),
+            })
+          );
+
+          activeHost.innerHTML = '';
+          activeHost.appendChild(
+            ui.emptyState({
+              icon: '🎯',
+              title: 'No active session',
+              message: 'Kick off your first rehearsal when you have a project.',
+              ctaText: 'Start your first session',
+              onCta: () => window.pdrs.toast.info('Session flow wires up in a later phase.'),
+            })
+          );
+        }, 350);
+      })();
+    </script>
   </body>
 </html>

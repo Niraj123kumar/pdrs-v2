@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Register — PDRS</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/animations.css" />
   </head>
@@ -16,29 +17,38 @@
     </nav>
 
     <main class="container container--narrow">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a><span class="breadcrumb__sep">›</span><span>Register</span>
+      </nav>
+
       <section class="card anim-fade-in">
         <h2 class="card__title">Create account</h2>
-        <form id="register-form" class="form" autocomplete="on">
+        <form id="register-form" class="form" autocomplete="on" novalidate data-validate>
           <div class="form__row">
             <label for="name">Full name</label>
-            <input type="text" id="name" name="name" required autocomplete="name" />
+            <input type="text" id="name" name="name" required autocomplete="name"
+                   placeholder="Your name" autofocus />
           </div>
           <div class="form__row">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" required autocomplete="email" />
+            <input type="email" id="email" name="email" required autocomplete="email"
+                   placeholder="you@example.com" />
           </div>
           <div class="form__row">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required minlength="6" autocomplete="new-password" />
+            <input type="password" id="password" name="password" required minlength="6"
+                   autocomplete="new-password" placeholder="At least 6 characters" />
           </div>
           <div class="form__row">
-            <label for="role">Role</label>
-            <select id="role" name="role" required>
-              <option value="student">Student</option>
-              <option value="faculty">Faculty</option>
-            </select>
+            <label>Role</label>
+            <div class="toggle-group" role="radiogroup" aria-label="Account role">
+              <input type="radio" id="role-student" name="role" value="student" checked />
+              <label for="role-student">Student</label>
+              <input type="radio" id="role-faculty" name="role" value="faculty" />
+              <label for="role-faculty">Faculty</label>
+            </div>
           </div>
-          <button type="submit" class="btn btn--primary">Create account</button>
+          <button type="submit" id="register-submit" class="btn btn--primary">Create account</button>
           <p class="muted">Registration handler wires up in Phase 2.</p>
         </form>
       </section>
@@ -48,7 +58,36 @@
 
     <script src="/js/utils.js"></script>
     <script src="/js/toast.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
+    <script>
+      (function () {
+        const form = document.getElementById('register-form');
+        const submitBtn = document.getElementById('register-submit');
+        const pwInput = document.getElementById('password');
+
+        // Attach a strength meter to the password field.
+        window.pdrs.ui.attachStrengthMeter(pwInput);
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (!form.checkValidity()) return;
+
+          window.pdrs.ui.setLoading(submitBtn, true, 'Creating account…');
+          try {
+            // Phase 2 will wire to /api/auth/register.
+            await new Promise((r) => setTimeout(r, 500));
+            window.pdrs.toast.info('Registration handler wires up in Phase 2.');
+          } catch (err) {
+            window.pdrs.toast.err((err && err.message) || 'Registration failed.');
+            form.classList.add('shake');
+            setTimeout(() => form.classList.remove('shake'), 450);
+          } finally {
+            window.pdrs.ui.setLoading(submitBtn, false);
+          }
+        });
+      })();
+    </script>
   </body>
 </html>
