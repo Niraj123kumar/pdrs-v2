@@ -29,6 +29,10 @@ const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
 
 const app = express();
 
+// Trust the first reverse proxy (Replit's iframe proxy / production load
+// balancers) so express-rate-limit and req.ip see the real client address.
+app.set('trust proxy', 1);
+
 // --- Security & parsing middleware -----------------------------------------
 app.use(
   helmet({
