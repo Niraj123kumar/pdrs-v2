@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login — PDRS</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/animations.css" />
   </head>
@@ -16,21 +17,34 @@
     </nav>
 
     <main class="container container--narrow">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a><span class="breadcrumb__sep">›</span><span>Login</span>
+      </nav>
+
       <section class="card anim-fade-in">
         <h2 class="card__title">Login</h2>
         <p class="muted">Sign in with your student or faculty account.</p>
 
-        <form id="login-form" class="form" autocomplete="on" novalidate>
+        <form id="login-form" class="form" autocomplete="on" novalidate data-validate>
           <div class="form__row">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" required autocomplete="email" />
+            <input type="email" id="email" name="email" required autocomplete="email"
+                   placeholder="you@example.com" autofocus />
           </div>
           <div class="form__row">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required minlength="1" autocomplete="current-password" />
+            <input type="password" id="password" name="password" required minlength="6"
+                   autocomplete="current-password" placeholder="••••••••" />
+          </div>
+          <div class="form__row form__row--inline">
+            <label class="checkbox-row">
+              <input type="checkbox" id="remember" name="remember" />
+              <span>Remember me</span>
+            </label>
+            <a href="#" id="forgot-link" class="muted" style="font-size:13px;">Forgot password?</a>
           </div>
           <p id="form-error" class="status status--err hidden" role="alert"></p>
-          <button type="submit" id="submit-btn" class="btn btn--primary">Sign in</button>
+          <button type="submit" id="login-submit" class="btn btn--primary">Sign in</button>
           <p class="muted">Don't have an account? <a href="/register.html">Register</a>.</p>
         </form>
       </section>
@@ -48,13 +62,16 @@
 
     <script src="/js/utils.js"></script>
     <script src="/js/toast.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script>
       (function () {
         const form = document.getElementById('login-form');
         const errorEl = document.getElementById('form-error');
-        const submitBtn = document.getElementById('submit-btn');
+        const submitBtn = document.getElementById('login-submit');
+        const emailEl = document.getElementById('email');
+        const forgot = document.getElementById('forgot-link');
 
         function showError(msg) {
           errorEl.textContent = msg;
@@ -65,12 +82,27 @@
           errorEl.classList.add('hidden');
         }
 
-        // If already signed in, send them to the right dashboard.
+        // If already signed in, send to dashboard
         if (pdrs.auth.isAuthenticated()) {
           const user = pdrs.auth.getUser();
           window.location.replace(pdrs.auth.dashboardFor(user && user.role));
           return;
         }
+
+        // Restore remembered email
+        try {
+          const last = window.localStorage.getItem('pdrs.lastEmail');
+          if (last) {
+            emailEl.value = last;
+            document.getElementById('remember').checked = true;
+            document.getElementById('password').focus();
+          }
+        } catch (_e) { /* ignore */ }
+
+        forgot.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.pdrs.toast.info('Password reset is coming in a later phase.');
+        });
 
         form.addEventListener('submit', async function (ev) {
           ev.preventDefault();
@@ -83,8 +115,13 @@
             return;
           }
 
-          submitBtn.disabled = true;
-          submitBtn.textContent = 'Signing in…';
+          if (document.getElementById('remember').checked) {
+            window.localStorage.setItem('pdrs.lastEmail', email);
+          } else {
+            window.localStorage.removeItem('pdrs.lastEmail');
+          }
+
+          window.pdrs.ui.setLoading(submitBtn, true, 'Signing in…');
           try {
             const res = await pdrs.api.post('/api/auth/login', { email, password });
             pdrs.auth.saveToken(res.token, res.user);
@@ -93,8 +130,10 @@
           } catch (err) {
             const msg = (err && err.body && err.body.error) || err.message || 'Login failed';
             showError(msg);
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Sign in';
+            form.classList.add('shake');
+            setTimeout(() => form.classList.remove('shake'), 450);
+          } finally {
+            window.pdrs.ui.setLoading(submitBtn, false);
           }
         });
       })();

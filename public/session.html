@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Rehearsal Session — PDRS</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/animations.css" />
   </head>
@@ -16,24 +17,35 @@
     </nav>
 
     <main class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/student.html">Dashboard</a><span class="breadcrumb__sep">›</span><span>Session</span>
+      </nav>
+
       <header class="hero anim-fade-in">
         <h1>Rehearsal Session</h1>
         <p class="tagline">Answer the reviewer's questions. Scores appear at the end.</p>
       </header>
 
       <section class="card anim-slide-up">
-        <h2 class="card__title">Question</h2>
+        <div class="row row--between">
+          <h2 class="card__title">Question</h2>
+          <span id="q-progress" class="badge">— / —</span>
+        </div>
         <p id="question-text" class="muted">Session flow wires up in a later phase.</p>
       </section>
 
-      <section class="card anim-slide-up">
+      <section class="card anim-pop">
         <h2 class="card__title">Your answer</h2>
-        <form id="answer-form" class="form">
+        <form id="answer-form" class="form" novalidate data-validate>
           <div class="form__row">
             <label for="answer">Answer</label>
-            <textarea id="answer" name="answer" placeholder="Type your answer…"></textarea>
+            <textarea id="answer" name="answer" placeholder="Type your answer…"
+                      maxlength="2000" data-counter></textarea>
           </div>
-          <button type="submit" class="btn btn--primary" disabled>Submit answer</button>
+          <div class="row row--between">
+            <button type="button" id="cancel-session-btn" class="btn btn--ghost">Cancel session</button>
+            <button type="submit" id="submit-answer-btn" class="btn btn--primary" disabled>Submit answer</button>
+          </div>
         </form>
       </section>
     </main>
@@ -42,9 +54,28 @@
 
     <script src="/js/utils.js"></script>
     <script src="/js/toast.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script src="/js/animations.js"></script>
     <script src="/js/websocket.js"></script>
+    <script>
+      (function () {
+        const ui = window.pdrs.ui;
+        const cancelBtn = document.getElementById('cancel-session-btn');
+        cancelBtn.addEventListener('click', async () => {
+          const ok = await ui.confirmModal({
+            title: 'Cancel this session?',
+            message: 'Your in-progress answers will be discarded. This cannot be undone.',
+            confirmText: 'Cancel session',
+            cancelText: 'Keep going',
+          });
+          if (ok) {
+            window.pdrs.toast.warn('Session cancelled.');
+            setTimeout(() => (window.location.href = '/student.html'), 600);
+          }
+        });
+      })();
+    </script>
   </body>
 </html>

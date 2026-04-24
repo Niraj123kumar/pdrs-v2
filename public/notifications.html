@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Notifications — PDRS</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/animations.css" />
   </head>
@@ -17,6 +18,12 @@
     </nav>
 
     <main class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/student.html">Dashboard</a>
+        <span class="breadcrumb__sep">›</span>
+        <span>Notifications</span>
+      </nav>
+
       <header class="hero anim-fade-in">
         <h1>Notifications</h1>
         <p class="tagline">Requests, panel invites, and session updates.</p>
@@ -27,9 +34,7 @@
           <h2 class="card__title">Recent</h2>
           <button class="btn btn--ghost" id="mark-all-read" disabled>Mark all read</button>
         </div>
-        <div id="notification-list" class="stack">
-          <p class="muted">Notification list wires up in a later phase.</p>
-        </div>
+        <div id="notification-list" class="stack"></div>
       </section>
     </main>
 
@@ -37,9 +42,28 @@
 
     <script src="/js/utils.js"></script>
     <script src="/js/toast.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script src="/js/animations.js"></script>
     <script src="/js/websocket.js"></script>
+    <script>
+      (function () {
+        const ui = window.pdrs.ui;
+        const list = document.getElementById('notification-list');
+        list.appendChild(ui.skeletonLines(3));
+
+        setTimeout(() => {
+          list.innerHTML = '';
+          list.appendChild(
+            ui.emptyState({
+              icon: '🔔',
+              title: "You're all caught up! 🎉",
+              message: 'New requests, panel invites, and session updates will appear here.',
+            })
+          );
+        }, 350);
+      })();
+    </script>
   </body>
 </html>

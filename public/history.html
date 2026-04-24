@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>History — PDRS</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/animations.css" />
   </head>
@@ -17,6 +18,12 @@
     </nav>
 
     <main class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/student.html">Dashboard</a>
+        <span class="breadcrumb__sep">›</span>
+        <span>History</span>
+      </nav>
+
       <header class="hero anim-fade-in">
         <h1>Session History</h1>
         <p class="tagline">All your past rehearsal and panel sessions.</p>
@@ -24,19 +31,20 @@
 
       <section class="card anim-slide-up">
         <h2 class="card__title">Sessions</h2>
-        <table class="table" id="history-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Project</th>
-              <th>Status</th>
-              <th>Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="4" class="muted">History view wires up in a later phase.</td></tr>
-          </tbody>
-        </table>
+        <div class="table-wrap">
+          <table class="table" id="history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Project</th>
+                <th>Status</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody id="history-body"></tbody>
+          </table>
+        </div>
+        <div id="history-empty" hidden></div>
       </section>
     </main>
 
@@ -44,8 +52,35 @@
 
     <script src="/js/utils.js"></script>
     <script src="/js/toast.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script src="/js/animations.js"></script>
+    <script>
+      (function () {
+        const ui = window.pdrs.ui;
+        const body = document.getElementById('history-body');
+        const emptyHost = document.getElementById('history-empty');
+        const table = document.getElementById('history-table');
+
+        // Render skeleton rows while data would be loading.
+        body.appendChild(ui.skeletonRows(3, 4));
+
+        setTimeout(() => {
+          body.innerHTML = '';
+          table.hidden = true;
+          emptyHost.hidden = false;
+          emptyHost.appendChild(
+            ui.emptyState({
+              icon: '🗂️',
+              title: 'No sessions yet',
+              message: 'Start your first rehearsal to build up your history.',
+              ctaText: 'Start your first session',
+              ctaHref: '/student.html',
+            })
+          );
+        }, 400);
+      })();
+    </script>
   </body>
 </html>

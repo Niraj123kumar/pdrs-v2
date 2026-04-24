@@ -29,6 +29,15 @@
   50%      { opacity: 0.55; }
 }
 
+@keyframes pdrs-shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+.shake { animation: pdrs-shake 420ms ease both; }
+
 .anim-fade-in      { animation: pdrs-fade-in 180ms ease-out both; }
 .anim-slide-in     { animation: pdrs-slide-in-right 200ms ease-out both; }
 .anim-slide-up     { animation: pdrs-slide-up 220ms ease-out both; }

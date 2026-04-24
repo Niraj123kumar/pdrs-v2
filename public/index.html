@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PDRS — Project Defense Rehearsal System</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/animations.css" />
   </head>
@@ -23,8 +24,11 @@
       </header>
 
       <section class="card anim-slide-up">
-        <h2 class="card__title">Server status</h2>
-        <p id="status" class="status status--pending">Checking…</p>
+        <div class="row row--between">
+          <h2 class="card__title">Server status</h2>
+          <span id="status-dot" class="dot" aria-hidden="true"></span>
+        </div>
+        <p id="status" class="status status--pending"><span class="spinner" aria-hidden="true"></span> Checking…</p>
         <dl id="health-details" class="details" hidden>
           <dt>Service</dt><dd id="h-service">—</dd>
           <dt>Version</dt><dd id="h-version">—</dd>
@@ -32,6 +36,9 @@
           <dt>Users</dt><dd id="h-users">—</dd>
           <dt>Timestamp</dt><dd id="h-ts">—</dd>
         </dl>
+        <div class="row" style="margin-top:12px;">
+          <button id="recheck-btn" class="btn btn--ghost" type="button">Re-check</button>
+        </div>
       </section>
 
       <section class="card anim-slide-up">
@@ -46,6 +53,10 @@
           Phase 1 boots the server, database, and static frontend. Feature
           flows land in later phases.
         </p>
+        <div class="row" style="margin-top:12px;">
+          <a class="btn btn--primary" href="/login.html">Get started</a>
+          <a class="btn btn--ghost" href="/register.html">Create account</a>
+        </div>
       </section>
     </main>
 
@@ -53,31 +64,50 @@
 
     <script src="/js/utils.js"></script>
     <script src="/js/toast.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script src="/js/animations.js"></script>
     <script>
-      (async function () {
+      (function () {
         const statusEl = document.getElementById('status');
         const detailsEl = document.getElementById('health-details');
+        const dotEl = document.getElementById('status-dot');
+        const recheckBtn = document.getElementById('recheck-btn');
+
         function setStatus(text, variant) {
           statusEl.textContent = text;
           statusEl.classList.remove('status--pending', 'status--ok', 'status--err');
           statusEl.classList.add('status--' + variant);
+          dotEl.classList.remove('dot--ok', 'dot--err');
+          if (variant === 'ok') dotEl.classList.add('dot--ok');
+          if (variant === 'err') dotEl.classList.add('dot--err');
         }
-        try {
-          const data = await window.pdrs.api.get('/api/health');
-          setStatus('Online — ' + data.status, 'ok');
-          document.getElementById('h-service').textContent = data.service || '—';
-          document.getElementById('h-version').textContent = data.version || '—';
-          document.getElementById('h-db').textContent = data.db || '—';
-          document.getElementById('h-users').textContent = String(data.users ?? '—');
-          document.getElementById('h-ts').textContent = data.timestamp || '—';
-          detailsEl.hidden = false;
-        } catch (err) {
-          console.error(err);
-          setStatus('Unreachable', 'err');
+
+        async function check() {
+          if (recheckBtn) window.pdrs.ui.setLoading(recheckBtn, true, 'Checking…');
+          statusEl.innerHTML = '<span class="spinner" aria-hidden="true"></span> Checking…';
+          statusEl.classList.add('status--pending');
+          try {
+            const data = await window.pdrs.api.get('/api/health');
+            setStatus('Online — ' + data.status, 'ok');
+            document.getElementById('h-service').textContent = data.service || '—';
+            document.getElementById('h-version').textContent = data.version || '—';
+            document.getElementById('h-db').textContent = data.db || '—';
+            document.getElementById('h-users').textContent = String(data.users == null ? '—' : data.users);
+            document.getElementById('h-ts').textContent = data.timestamp || '—';
+            detailsEl.hidden = false;
+          } catch (err) {
+            console.error(err);
+            setStatus('Unreachable', 'err');
+            window.pdrs.toast.err('Could not reach the server. Try again.');
+          } finally {
+            if (recheckBtn) window.pdrs.ui.setLoading(recheckBtn, false);
+          }
         }
+
+        recheckBtn && recheckBtn.addEventListener('click', check);
+        check();
       })();
     </script>
   </body>
